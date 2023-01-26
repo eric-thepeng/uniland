@@ -12,7 +12,6 @@ public class Test_Inventory : MonoBehaviour
     private void Start()
     {
         AddAllIISO();
-        DisplayCategory();
     }
 
     private void Update()
