@@ -6,7 +6,7 @@ using UnityEngine;
 public class InventoryItemSO : ScriptableObject
 {
     public string name;
-    public enum Category {RawMaterial, CraftMaterial, Food, Tool, Furniture, Object}
+    public enum Category {RawMaterial, CraftMaterial, Food,  Furniture, Object , Tool}
     public Sprite inventoryIcon;
     public Category category;
 

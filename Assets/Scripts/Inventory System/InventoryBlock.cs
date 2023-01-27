@@ -62,6 +62,13 @@ public class InventoryBlock : MonoBehaviour
     void CreateDrag()
     {
         GetComponent<SpriteRenderer>().color = dragColr;
+        InventoryDrag ID = UI_Inventory.i.NewDragging(itemInfo.iiso);
+        ID.SetUpDragUI(itemInfo.iiso, this);
+    }
+
+    public void PlaceDrag()
+    {
+        GetComponent<SpriteRenderer>().color = normalColr;
     }
 
     public void CancelDrag()

@@ -21,6 +21,7 @@ public class Inventory : MonoBehaviour
         public InventoryItemSO iiso;
         public int totalAmount;
         public int inUseAmount;
+        public int inStockAmount { get { return totalAmount - inUseAmount; } }
         public InventoryItemSO.Category category
         {
             get { return iiso.category;}
@@ -40,8 +41,6 @@ public class Inventory : MonoBehaviour
     public List<ItemInfo> catTool = new List<ItemInfo>();
     public List<ItemInfo> catFurniture = new List<ItemInfo>();
     public List<ItemInfo> catObject = new List<ItemInfo>();
-
-
 
     public void AddInventoryItem(InventoryItemSO newIISO)
     {
@@ -77,7 +76,7 @@ public class Inventory : MonoBehaviour
         {
             GetItemInfo(iiso).inUseAmount -= 1;
         }
-
+        UI_Inventory.i.UpdateItemDisplay(GetItemInfo(iiso));
     }
 
     ItemInfo GetItemInfo(InventoryItemSO iiso)

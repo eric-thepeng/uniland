@@ -2,18 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TetrisDrag : MonoBehaviour//, IIventoryDrag
+public class TetrisDrag : InventoryDrag
 {
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-    
-    // Update is called once per frame
+    bool placed = false;
     void Update()
     {
-        
+        if (Input.GetMouseButtonUp(0))
+        {
+            PlaceTetris();
+        }
+        if (placed) return;
+        transform.position = GetMouseWorldPos();
+    }
+
+    private void PlaceTetris()
+    {
+        placed = true;
+        PlaceDragUI();
+        this.enabled = false;
     }
 }
