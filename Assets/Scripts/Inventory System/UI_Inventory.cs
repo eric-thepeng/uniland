@@ -22,12 +22,22 @@ public class UI_Inventory : MonoBehaviour
     [SerializeField] GameObject inventoryBlockBackgroundTemplate;
     List<GameObject> allBlockBackgrounds = new List<GameObject>();
     InventoryItemSO.Category displayingCategory;
-    List<InventoryBlock> displayingBlocks = new List<InventoryBlock>();
-    int maxColumns = 6;
-    int maxRows = 6;
+    [SerializeField] List<InventoryBlock> displayingBlocks = new List<InventoryBlock>();
+    int maxColumns = 3;
+    int maxRows = 12;
     [SerializeField] float displacement;
 
     public bool resetBackground = false;
+
+    [SerializeField] GameObject dragRawMaterial;
+    [SerializeField] GameObject dragCraftMaterial;
+    [SerializeField] GameObject dragFood;
+    [SerializeField] GameObject dragFurniture;
+    [SerializeField] GameObject dragObject;
+    [SerializeField] GameObject dragTool;
+
+    public InventoryDrag dragging = null;
+
 
     private void Update()
     {
@@ -38,35 +48,92 @@ public class UI_Inventory : MonoBehaviour
         }
     }
 
+    public InventoryDrag NewDragging(InventoryItemSO iiso)
+    {
+        InventoryItemSO.Category cat = iiso.category;
+        GameObject go = null;
+        if (cat == InventoryItemSO.Category.RawMaterial) go = Instantiate(dragRawMaterial);
+        else if (cat == InventoryItemSO.Category.CraftMaterial) go = Instantiate(dragCraftMaterial);
+        else if (cat == InventoryItemSO.Category.Food) go = Instantiate(dragFood);
+        else if (cat == InventoryItemSO.Category.Tool) go = Instantiate(dragTool);
+        else if (cat == InventoryItemSO.Category.Furniture) go = Instantiate(dragFurniture);
+        else if (cat == InventoryItemSO.Category.Object) go = Instantiate(dragObject);
+        dragging = go.GetComponent<InventoryDrag>();
+        return dragging;
+    }
+
     public void DisplayCategory(InventoryItemSO.Category cat)
     {
-        displayingBlocks.Clear();
-        print(Inventory.i.CategoryToList(cat).Count);
-        foreach(Inventory.ItemInfo ii in Inventory.i.CategoryToList(cat))
+        displayingCategory = cat;
+        foreach(InventoryBlock ib in displayingBlocks)
         {
-            GameObject newBlockGO = Instantiate(inventoryBlockTemplate, transform.Find("InventoryBlocks"));
-            InventoryBlock newIB = newBlockGO.GetComponent<InventoryBlock>();
-            newIB.SetUp(ii, displayingBlocks.Count / maxColumns, displayingBlocks.Count % maxColumns);
-            displayingBlocks.Add(newIB);
-            newBlockGO.transform.position = new Vector3(newBlockGO.transform.position.x + newIB.column * displacement,
-                                                        newBlockGO.transform.position.y - newIB.row * displacement,
-                                                        newBlockGO.transform.position.z);
-            newBlockGO.SetActive(true);
+            Destroy(ib.gameObject);
+        }
+       displayingBlocks.Clear();
+        foreach (Inventory.ItemInfo ii in Inventory.i.CategoryToList(cat))
+        {
+            if (ii.inStockAmount != 0)
+            {
+                CreateNewBlock(ii);
+            }
         }
     }
 
-    public void UpdateItemInfo()
+     void CreateNewBlock(Inventory.ItemInfo ii)
     {
-        DisplayCategory(displayingCategory);
+        GameObject newBlockGO = Instantiate(inventoryBlockTemplate, transform.Find("InventoryBlocks"));
+        InventoryBlock newIB = newBlockGO.GetComponent<InventoryBlock>();
+        newIB.SetUp(ii, displayingBlocks.Count / maxColumns, displayingBlocks.Count % maxColumns);
+        displayingBlocks.Add(newIB);
+        newBlockGO.transform.position = new Vector3(newBlockGO.transform.position.x + newIB.column * displacement,
+                                                    newBlockGO.transform.position.y - newIB.row * displacement,
+                                                    newBlockGO.transform.position.z);
+        newBlockGO.SetActive(true);
+    }
+
+    public void UpdateItemDisplay(Inventory.ItemInfo ii)
+    {
+        if (ii.iiso.category != displayingCategory) return;
+        if(ii.inStockAmount == 0)
+        {
+            foreach (InventoryBlock ib in displayingBlocks)
+            {
+                if (ib.CheckIISO(ii.iiso))
+                {
+                    InventoryBlock temp = ib;
+                    displayingBlocks.Remove(temp);
+                    Destroy(temp.gameObject);
+                    break;
+                }
+            }
+            DisplayCategory(displayingCategory);
+            return;
+        }
+        foreach(InventoryBlock ib in displayingBlocks)
+        {
+            if (ib.CheckIISO(ii.iiso))
+            {
+                ib.UpdateAmount();
+                return;
+            }
+        }
+        CreateNewBlock(ii);
     }
 
     public void CreateInventoryBlocksBackground()
     {
+        print("recreate background blocks");
+        print(maxRows + " " + maxColumns);
+
         //delete origional background
-        foreach(GameObject go in allBlockBackgrounds)
+        /*
+        if (allBlockBackgrounds!=null && allBlockBackgrounds.Count != 0)
         {
-            go.SetActive(false);
-        }
+            foreach (GameObject go in allBlockBackgrounds)
+            {
+                go.SetActive(false);
+            }
+        }*/
 
         //make new background
         for(int i = 0; i<maxColumns; i++)

@@ -21,6 +21,11 @@ public class Inventory : MonoBehaviour
         public InventoryItemSO iiso;
         public int totalAmount;
         public int inUseAmount;
+        public int inStockAmount { get { return totalAmount - inUseAmount; } }
+        public InventoryItemSO.Category category
+        {
+            get { return iiso.category;}
+        }
 
         public ItemInfo(InventoryItemSO newIISO)
         {
@@ -37,21 +42,51 @@ public class Inventory : MonoBehaviour
     public List<ItemInfo> catFurniture = new List<ItemInfo>();
     public List<ItemInfo> catObject = new List<ItemInfo>();
 
-
-
     public void AddInventoryItem(InventoryItemSO newIISO)
     {
+        
         foreach(ItemInfo ii in CategoryToList(newIISO.category))
         {
             if (ii.iiso == newIISO)
             {
                 ii.totalAmount += 1;
                 print("added amount: " + newIISO.name);
+                UI_Inventory.i.UpdateItemDisplay(ii);
                 return;
             }
         }
-        CategoryToList(newIISO.category).Add(new ItemInfo(newIISO));
+        ItemInfo newII = new ItemInfo(newIISO);
+        CategoryToList(newIISO.category).Add(newII);
         print("added new: " + newIISO.name);
+        UI_Inventory.i.UpdateItemDisplay(newII);
+    }
+
+/// <summary>
+/// true: total -> inUse     false: inUse -> total
+/// </summary>
+/// <param name="iiso"></param>
+/// <param name="use"></param>
+    public void InUseItem(InventoryItemSO iiso, bool use)
+    {
+        if (use)
+        {
+            GetItemInfo(iiso).inUseAmount += 1;
+        }
+        else
+        {
+            GetItemInfo(iiso).inUseAmount -= 1;
+        }
+        UI_Inventory.i.UpdateItemDisplay(GetItemInfo(iiso));
+    }
+
+    ItemInfo GetItemInfo(InventoryItemSO iiso)
+    {
+        List<ItemInfo> list = CategoryToList(iiso.category);
+        foreach(ItemInfo ii in list)
+        {
+            if (ii.iiso == iiso) return ii;
+        }
+        return null;
     }
 
     public List<ItemInfo> CategoryToList(InventoryItemSO.Category cat)

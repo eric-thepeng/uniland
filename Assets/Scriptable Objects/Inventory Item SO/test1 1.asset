@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 1
   inventoryIcon: {fileID: 21300000, guid: 98dc49668b40c43acbf001f83cb38f50, type: 3}
-  category: 0
+  category: 1
   dragOut: {fileID: 0}
