@@ -9,6 +9,4 @@ public class InventoryItemSO : ScriptableObject
     public enum Category {RawMaterial, CraftMaterial, Food,  Furniture, Object , Tool}
     public Sprite inventoryIcon;
     public Category category;
-
-    public GameObject dragOut;
 }
