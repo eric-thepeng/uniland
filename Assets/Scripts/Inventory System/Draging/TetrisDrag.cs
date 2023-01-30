@@ -5,6 +5,11 @@ using UnityEngine;
 public class TetrisDrag : InventoryDrag
 {
     bool placed = false;
+
+    private void Start()
+    {
+        print(myIISO.name);
+    }
     void Update()
     {
         if (Input.GetMouseButtonUp(0))
