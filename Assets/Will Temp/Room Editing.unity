@@ -256,6 +256,7 @@ MonoBehaviour:
   cellSize: 3
   debugMode: 1
   placedObjectTypeSOList:
+  - {fileID: 0}
   - {fileID: 11400000, guid: 8fb23cc72ea2c22458346ee75bb6b721, type: 2}
   - {fileID: 11400000, guid: ca77073cb93108740bd75a8cfdc8bc42, type: 2}
 --- !u!1 &2032937026

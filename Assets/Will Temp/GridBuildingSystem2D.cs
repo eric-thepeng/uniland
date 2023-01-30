@@ -17,7 +17,7 @@ public class GridBuildingSystem2D : MonoBehaviour {
     [Header("Grid")]
     public int gridWidth = 5;
     public int gridHeight = 5;
-    public float cellSize = 3f;
+    public float cellSize;
     public bool debugMode = true;
 
     [SerializeField] private List<PlacedObjectTypeSO> placedObjectTypeSOList = null;
